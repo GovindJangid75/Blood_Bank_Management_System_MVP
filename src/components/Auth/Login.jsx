@@ -1,6 +1,7 @@
 import { useState, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from '../../context/ToastContext';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -11,6 +12,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { add } = useToast();
 
   const handleChange = (e) => {
     setFormData({
@@ -27,9 +29,11 @@ const Login = () => {
     const result = await login(formData.email, formData.password);
     
     if (result.success) {
+      add('Welcome back!', { type: 'success' });
       navigate('/dashboard');
     } else {
       setError(result.message);
+      add(result.message, { type: 'error' });
     }
     setLoading(false);
   };

@@ -1,6 +1,7 @@
 import { useState, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from '../../context/ToastContext';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -15,6 +16,7 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const { register } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { add } = useToast();
 
   const handleChange = (e) => {
     setFormData({
@@ -43,9 +45,11 @@ const Register = () => {
     const result = await register(userData);
     
     if (result.success) {
+      add('Account created successfully!', { type: 'success' });
       navigate('/dashboard');
     } else {
       setError(result.message);
+      add(result.message, { type: 'error' });
     }
     setLoading(false);
   };

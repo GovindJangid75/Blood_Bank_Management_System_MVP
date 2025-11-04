@@ -2,6 +2,7 @@ import { useState, useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import API from '../../utils/api';
+import { useToast } from '../../context/ToastContext';
 
 const DonorRegistration = () => {
   const [formData, setFormData] = useState({
@@ -33,6 +34,7 @@ const DonorRegistration = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { user } = useContext(AuthContext);
+  const { add } = useToast();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -62,9 +64,11 @@ const DonorRegistration = () => {
 
     try {
       await API.post('/donors', formData);
+      add('Thank you for saving lives! 🎉', { type: 'success' });
       navigate('/dashboard');
     } catch (error) {
       setError(error.response?.data?.message || 'Registration failed');
+      add(error.response?.data?.message || 'Registration failed', { type: 'error' });
     } finally {
       setLoading(false);
     }
